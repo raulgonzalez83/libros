@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 import edu.upc.eetac.dsa.roxana.libros.model.LibrosError;
 
 public class LibroNotFoundException extends WebApplicationException {
-	private final static String MESSAGE = "Sting not found";
+	private final static String MESSAGE = "Book not found";
 
 	public LibroNotFoundException() {
 		super(Response

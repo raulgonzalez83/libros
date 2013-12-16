@@ -1,27 +1,29 @@
 package edu.upc.eetac.dsa.roxana.libros.model;
 
-public class Reseña {
-	private int idres;
-	private String titulolibro;
+import java.sql.Date;
+
+public class Resena {
+	private int idresena;
+	private int idlibro;
 	private String username;
 	private String name;
 	private String texto;
-	private java.util.Date fecha_creacion;
+	private Date fecha_creacion;
 
-	public java.util.Date getFecha_creacion() {
+	public Date getFecha_creacion() {
 		return fecha_creacion;
 	}
 
-	public void setFecha_creacion(java.util.Date fecha_creacion) {
+	public void setFecha_creacion(Date fecha_creacion) {
 		this.fecha_creacion = fecha_creacion;
 	}
 
-	public int getIdres() {
-		return idres;
+	public int getIdresena() {
+		return idresena;
 	}
 
-	public void setIdres(int idres) {
-		this.idres = idres;
+	public void setIdresena(int idres) {
+		this.idresena = idres;
 	}
 
 	public String getName() {
@@ -40,13 +42,6 @@ public class Reseña {
 		this.texto = texto;
 	}
 
-	public String getTitulolibro() {
-		return titulolibro;
-	}
-
-	public void setTitulolibro(String titulolibro) {
-		this.titulolibro = titulolibro;
-	}
 
 	public String getUsername() {
 		return username;
@@ -54,6 +49,14 @@ public class Reseña {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public int getIdlibro() {
+		return idlibro;
+	}
+	
+	public void setIdlibro(int idlibro) {
+		this.idlibro = idlibro;
 	}
 
 }

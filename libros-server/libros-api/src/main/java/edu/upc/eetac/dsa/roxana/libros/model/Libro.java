@@ -11,6 +11,7 @@ public class Libro {
 	private Date fecha_edicion;
 	private Date fecha_impresion;
 	private String editorial;
+	private int idlibro;
 
 	public String getAutor() {
 		return autor;
@@ -67,6 +68,14 @@ public class Libro {
 	public void setFecha_impresion(Date fecha_impresion) {
 		this.fecha_impresion = fecha_impresion;
 
+	}
+
+	public int getIdlibro() {
+		return idlibro;
+	}
+
+	public void setIdlibro(int idlibro) {
+		this.idlibro = idlibro;
 	}
 
 }
