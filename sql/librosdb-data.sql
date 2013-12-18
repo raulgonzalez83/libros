@@ -19,33 +19,33 @@ insert into libros (titulo, autor, lengua, edicion, fecha_edicion, fecha_impresi
 insert into libros (titulo, autor, lengua, edicion, fecha_edicion, fecha_impresion, editorial) values ('libro15', 'autor15', 'catalan',1,'01-05-11','03-10-17','editorial4');
 
 
-insert into resenas (idlibro, username, name,texto) values ('1', 'alicia', 'Alicia','Resña libro0');
-insert into resenas (idlibro, username, name,texto) values ('2', 'blas', 'Blas','Resña libro1');
-insert into resenas (idlibro, username, name,texto) values ('3', 'blas', 'Blas','Resña libro2');
-insert into resenas (idlibro, username, name,texto) values ('4', 'alicia', 'Alicia','Resña libro3');
-insert into resenas (idlibro, username, name,texto) values ('5', 'blas', 'Blas','Resña libro4');
-insert into resenas (idlibro, username, name,texto) values ('6', 'alicia', 'Alicia','Resña libro5');
-insert into resenas (idlibro, username, name,texto) values ('7', 'alicia', 'Alicia','Resña libro6');
-insert into resenas (idlibro, username, name,texto) values ('8', 'alicia', 'Alicia','Resña libro7');
-insert into resenas (idlibro, username, name,texto) values ('9', 'blas', 'Blas','Resña libro8');
-insert into resenas (idlibro, username, name,texto) values ('10', 'blas', 'Blas','Resña libro9');
-insert into resenas (idlibro, username, name,texto) values ('11', 'alicia', 'Alicia','Resña libro10');
-insert into resenas (idlibro, username, name,texto) values ('12', 'blas', 'Blas','Resña libro11');
-insert into resenas (idlibro, username, name,texto) values ('2', 'alicia', 'Alicia','Resña libro13');
-insert into resenas (idlibro, username, name,texto) values ('3', 'blas', 'Blas','Resña libro14');
-insert into resenas (idlibro, username, name,texto) values ('15', 'alicia', 'Alicia','Resña libro15');
-insert into resenas (idlibro, username, name,texto) values ('5', 'alicia', 'Alicia','Resña libro16');
-insert into resenas (idlibro, username, name,texto) values ('10', 'alicia', 'Alicia','Resña libro17');
-insert into resenas (idlibro, username, name,texto) values ('3', 'alicia', 'Blas','Resña libro18');
-insert into resenas (idlibro, username, name,texto) values ('9', 'alicia', 'Alicia','Resña libro19');
-insert into resenas (idlibro, username, name,texto) values ('14', 'blas', 'Blas','Resña libro20');
-insert into resenas (idlibro, username, name,texto) values ('7', 'blas', 'Alicia','Resña libro21');
-insert into resenas (idlibro, username, name,texto) values ('8', 'blas', 'Blas','Resña libro22');
-insert into resenas (idlibro, username, name,texto) values ('6', 'blas', 'Blas','Resña libro23');
-insert into resenas (idlibro, username, name,texto) values ('3', 'alicia', 'Alicia','Resña libro24');
-insert into resenas (idlibro, username, name,texto) values ('1', 'blas', 'Blas','Resña libro25');
-insert into resenas (idlibro, username, name,texto) values ('1', 'test', 'Test','Resña libro');
-insert into resenas (idlibro, username, name,texto) values ('5', 'test', 'Test','Resña libro');
+insert into resenas (idlibro, username,texto) values ('1', 'alicia','Resña libro0');
+insert into resenas (idlibro, username, texto) values ('2', 'blas', 'Resña libro1');
+insert into resenas (idlibro, username, texto) values ('3', 'blas', 'Resña libro2');
+insert into resenas (idlibro, username, texto) values ('4', 'alicia','Resña libro3');
+insert into resenas (idlibro, username,texto) values ('5', 'blas','Resña libro4');
+insert into resenas (idlibro, username,texto) values ('6', 'alicia', 'Resña libro5');
+insert into resenas (idlibro, username,texto) values ('7', 'alicia', 'Resña libro6');
+insert into resenas (idlibro, username,texto) values ('8', 'alicia', 'Resña libro7');
+insert into resenas (idlibro, username,texto) values ('9', 'blas', 'Resña libro8');
+insert into resenas (idlibro, username,texto) values ('10', 'blas', 'Resña libro9');
+insert into resenas (idlibro, username,texto) values ('11', 'alicia', 'Resña libro10');
+insert into resenas (idlibro, username,texto) values ('12', 'blas', 'Resña libro11');
+insert into resenas (idlibro, username,texto) values ('2', 'alicia', 'Resña libro13');
+insert into resenas (idlibro, username,texto) values ('3', 'blas', 'Resña libro14');
+insert into resenas (idlibro, username,texto) values ('15', 'alicia', 'Resña libro15');
+insert into resenas (idlibro, username,texto) values ('5', 'alicia', 'Resña libro16');
+insert into resenas (idlibro, username,texto) values ('10', 'alicia','Resña libro17');
+insert into resenas (idlibro, username,texto) values ('3', 'alicia', 'Resña libro18');
+insert into resenas (idlibro, username,texto) values ('9', 'alicia', 'Resña libro19');
+insert into resenas (idlibro, username,texto) values ('14', 'blas','Resña libro20');
+insert into resenas (idlibro, username,texto) values ('7', 'blas', 'Resña libro21');
+insert into resenas (idlibro, username,texto) values ('8', 'blas', 'Resña libro22');
+insert into resenas (idlibro, username,texto) values ('6', 'blas', 'Resña libro23');
+insert into resenas (idlibro, username,texto) values ('3', 'alicia', 'Resña libro24');
+insert into resenas (idlibro, username,texto) values ('1', 'blas','Resña libro25');
+insert into resenas (idlibro, username,texto) values ('1', 'test', 'Resña libro');
+insert into resenas (idlibro, username,texto) values ('5', 'test', 'Resña libro');
 
 
 

@@ -9,6 +9,7 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -18,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
 
 import edu.upc.eetac.dsa.roxana.libros.model.Libro;
 import edu.upc.eetac.dsa.roxana.libros.model.LibroCollection;
@@ -26,6 +28,9 @@ import edu.upc.eetac.dsa.roxana.libros.model.LibroCollection;
 public class LibroResource {
 
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
+
+	@Context
+	private SecurityContext security;
 
 	@GET
 	@Produces(MediaType.LIBROS_API_LIBRO_COLLECTION)
@@ -85,7 +90,7 @@ public class LibroResource {
 	@GET
 	@Path("/search")
 	@Produces(MediaType.LIBROS_API_LIBRO_COLLECTION)
-	public LibroCollection getLibros(@QueryParam("titulo") String titulo,
+	public LibroCollection searchLibros(@QueryParam("titulo") String titulo,
 			@QueryParam("autor") String autor) {
 		LibroCollection libros = new LibroCollection();
 
@@ -117,18 +122,22 @@ public class LibroResource {
 			}
 
 			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				Libro libro = new Libro();
+			if (rs.next() == false)
+				throw new LibroNotFoundException();
+			else {
+				while (rs.next()) {
+					Libro libro = new Libro();
 
-				libro.setTitulo(rs.getString("titulo"));
-				libro.setAutor(rs.getString("autor"));
-				libro.setEditorial(rs.getString("editorial"));
-				libro.setLengua(rs.getString("lengua"));
-				libro.setEdicion(rs.getInt("edicion"));
-				libro.setFecha_edicion(rs.getDate("fecha_edicion"));
-				libro.setFecha_impresion(rs.getDate("fecha_impresion"));
+					libro.setTitulo(rs.getString("titulo"));
+					libro.setAutor(rs.getString("autor"));
+					libro.setEditorial(rs.getString("editorial"));
+					libro.setLengua(rs.getString("lengua"));
+					libro.setEdicion(rs.getInt("edicion"));
+					libro.setFecha_edicion(rs.getDate("fecha_edicion"));
+					libro.setFecha_impresion(rs.getDate("fecha_impresion"));
 
-				libros.add(libro);
+					libros.add(libro);
+				}
 			}
 		} catch (SQLException e) {
 			throw new InternalServerException(e.getMessage());
@@ -210,119 +219,135 @@ public class LibroResource {
 	@Produces(MediaType.LIBROS_API_LIBRO)
 	public Libro createLibro(Libro libro) {
 
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			conn = ds.getConnection();
-		} catch (SQLException e) {
-			throw new ServiceUnavailableException(e.getMessage());
-		}
-		try {
-			java.sql.Date fecha_edicion = new java.sql.Date(
-					(libro.getFecha_edicion()).getTime());
+		if (security.isUserInRole("registered")) {
 
-			java.sql.Date fecha_impresion = new java.sql.Date(
-					(libro.getFecha_edicion()).getTime());
+			{
+				throw new NotAllowedException();
+			}
+		} else {
 
-			stmt = conn.createStatement();
-			String update = null;
-			update = "INSERT INTO libros (titulo, autor, lengua, edicion, fecha_edicion, fecha_impresion, editorial) VALUES ('"
-					+ libro.getTitulo()
-					+ "','"
-					+ libro.getAutor()
-					+ "','"
-					+ libro.getLengua()
-					+ "', '"
-					+ libro.getEdicion()
-					+ "', '"
-					+ fecha_edicion
-					+ "','"
-					+ fecha_impresion
-					+ "', '"
-					+ libro.getEditorial() + "')";
-			stmt.executeUpdate(update, Statement.RETURN_GENERATED_KEYS);
-			ResultSet rs = stmt.getGeneratedKeys();
-
+			Connection conn = null;
+			Statement stmt = null;
 			try {
+				conn = ds.getConnection();
+			} catch (SQLException e) {
+				throw new ServiceUnavailableException(e.getMessage());
+			}
+			try {
+				java.sql.Date fecha_edicion = new java.sql.Date(
+						(libro.getFecha_edicion()).getTime());
 
-				String sql = "SELECT * FROM libros WHERE titulo='"
-						+ libro.getTitulo() + "'";
-				rs = stmt.executeQuery(sql);
+				java.sql.Date fecha_impresion = new java.sql.Date(
+						(libro.getFecha_edicion()).getTime());
 
-				if (rs.next()) {
+				stmt = conn.createStatement();
+				String update = null;
+				update = "INSERT INTO libros (titulo, autor, lengua, edicion, fecha_edicion, fecha_impresion, editorial) VALUES ('"
+						+ libro.getTitulo()
+						+ "','"
+						+ libro.getAutor()
+						+ "','"
+						+ libro.getLengua()
+						+ "', '"
+						+ libro.getEdicion()
+						+ "', '"
+						+ fecha_edicion
+						+ "','"
+						+ fecha_impresion
+						+ "', '" + libro.getEditorial() + "')";
+				stmt.executeUpdate(update, Statement.RETURN_GENERATED_KEYS);
+				ResultSet rs = stmt.getGeneratedKeys();
 
-					libro.setIdlibro(rs.getInt("idlibro"));
-					libro.setTitulo(rs.getString("titulo"));
-					libro.setAutor(rs.getString("autor"));
-					libro.setEditorial(rs.getString("editorial"));
-					libro.setLengua(rs.getString("lengua"));
-					libro.setEdicion(rs.getInt("edicion"));
-					libro.setFecha_edicion(rs.getDate("fecha_edicion"));
-					libro.setFecha_impresion(rs.getDate("fecha_impresion"));
+				try {
 
+					String sql = "SELECT * FROM libros WHERE titulo='"
+							+ libro.getTitulo() + "'";
+					rs = stmt.executeQuery(sql);
+
+					if (rs.next()) {
+
+						libro.setIdlibro(rs.getInt("idlibro"));
+						libro.setTitulo(rs.getString("titulo"));
+						libro.setAutor(rs.getString("autor"));
+						libro.setEditorial(rs.getString("editorial"));
+						libro.setLengua(rs.getString("lengua"));
+						libro.setEdicion(rs.getInt("edicion"));
+						libro.setFecha_edicion(rs.getDate("fecha_edicion"));
+						libro.setFecha_impresion(rs.getDate("fecha_impresion"));
+
+					}
+
+					else
+						throw new LibroNotFoundException();
+
+				} catch (SQLException e) {
+					throw new InternalServerException(e.getMessage());
 				}
 
-				else
+			} catch (SQLException e) {
+				throw new InternalServerException(e.getMessage());
+			}
+
+			finally {
+				try {
+					stmt.close();
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			return libro;
+		}
+	}
+
+	@DELETE
+	@Path("/{idlibro}")
+	public void deleteLibro(@PathParam("idlibro") String idlibro) {
+
+		if (security.isUserInRole("registered")) {
+
+			{
+				throw new NotAllowedException();
+			}
+		} else {
+
+			Connection conn = null;
+			Statement stmt = null;
+			try {
+				conn = ds.getConnection();
+			} catch (SQLException e) {
+				throw new ServiceUnavailableException(e.getMessage());
+			}
+
+			try {
+				stmt = conn.createStatement();
+				String sql;
+
+				sql = "DELETE FROM resenas WHERE idlibro='" + idlibro + "'";
+				stmt.executeUpdate(sql);
+
+				sql = "DELETE FROM libros WHERE idlibro='" + idlibro + "'";
+
+				int rows = stmt.executeUpdate(sql);
+				if (rows == 0)
 					throw new LibroNotFoundException();
 
 			} catch (SQLException e) {
 				throw new InternalServerException(e.getMessage());
 			}
 
-		} catch (SQLException e) {
-			throw new InternalServerException(e.getMessage());
-		}
-
-		finally {
-			try {
-				stmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			finally {
+				try {
+					stmt.close();
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-
-		}
-
-		return libro;
-	}
-
-	@DELETE
-	@Path("/{idlibro}")
-	public void deleteLibro(@PathParam("idlibro") String idlibro) {
-		// TODO Delete record in database stings identified by stingid.
-
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			conn = ds.getConnection();
-		} catch (SQLException e) {
-			throw new ServiceUnavailableException(e.getMessage());
-		}
-
-		try {
-			stmt = conn.createStatement();
-			String sql;
-
-			sql = "DELETE FROM resenas WHERE idlibro='" + idlibro + "'";
-			stmt.executeUpdate(sql);
-
-			sql = "DELETE FROM libros WHERE idlibro='" + idlibro + "'";
-			stmt.executeUpdate(sql);
-
-		} catch (SQLException e) {
-			throw new InternalServerException(e.getMessage());
-		}
-
-		finally {
-			try {
-				stmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
 		}
 
 	}
@@ -332,61 +357,70 @@ public class LibroResource {
 	@Consumes(MediaType.LIBROS_API_LIBRO)
 	@Produces(MediaType.LIBROS_API_LIBRO)
 	public Libro updateLibro(@PathParam("idlibro") String idlibro, Libro libro) {
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			conn = ds.getConnection();
-		} catch (SQLException e) {
-			throw new ServiceUnavailableException(e.getMessage());
-		}
-		try {
 
-			java.sql.Date fecha_edicion = new java.sql.Date(
-					(libro.getFecha_edicion()).getTime());
+		if (security.isUserInRole("registered")) {
 
-			java.sql.Date fecha_impresion = new java.sql.Date(
-					(libro.getFecha_edicion()).getTime());
-
-			stmt = conn.createStatement();
-			String update = null; // TODO: create update query
-			update = "UPDATE libros SET libros.autor='" + libro.getAutor()
-					+ "', libros.titulo= '" + libro.getTitulo()
-					+ "', libros.lengua= '" + libro.getLengua()
-					+ "', libros.edicion= '" + libro.getEdicion()
-					+ "', libros.fecha_edicion= '" + fecha_edicion
-					+ "', libros.fecha_impresion= '" + fecha_impresion
-					+ "', libros.editorial= '" + libro.getEditorial()
-					+ "' WHERE idlibro='" + idlibro + "'";
-			int rows = stmt.executeUpdate(update,
-					Statement.RETURN_GENERATED_KEYS);
-			if (rows != 0) {
-
-				String sql = "SELECT * FROM libros WHERE idlibro='" + idlibro
-						+ "'";
-				ResultSet rs = stmt.executeQuery(sql);
-				if (rs.next()) {
-					libro.setIdlibro(rs.getInt("idlibro"));
-					libro.setAutor(rs.getString("autor"));
-					libro.setEdicion(rs.getInt("edicion"));
-					libro.setEditorial(rs.getString("editorial"));
-					libro.setFecha_edicion(rs.getDate("fecha_edicion"));
-					libro.setFecha_impresion(rs.getDate("fecha_impresion"));
-					libro.setLengua(rs.getString("lengua"));
-					libro.setTitulo(rs.getString("titulo"));
-				}
-			} else
-				throw new LibroNotFoundException();
-		} catch (SQLException e) {
-			throw new InternalServerException(e.getMessage());
-		} finally {
-			try {
-				stmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			{
+				throw new NotAllowedException();
 			}
+		} else {
+
+			Connection conn = null;
+			Statement stmt = null;
+			try {
+				conn = ds.getConnection();
+			} catch (SQLException e) {
+				throw new ServiceUnavailableException(e.getMessage());
+			}
+			try {
+
+				java.sql.Date fecha_edicion = new java.sql.Date(
+						(libro.getFecha_edicion()).getTime());
+
+				java.sql.Date fecha_impresion = new java.sql.Date(
+						(libro.getFecha_edicion()).getTime());
+
+				stmt = conn.createStatement();
+				String update = null; // TODO: create update query
+				update = "UPDATE libros SET libros.autor='" + libro.getAutor()
+						+ "', libros.titulo= '" + libro.getTitulo()
+						+ "', libros.lengua= '" + libro.getLengua()
+						+ "', libros.edicion= '" + libro.getEdicion()
+						+ "', libros.fecha_edicion= '" + fecha_edicion
+						+ "', libros.fecha_impresion= '" + fecha_impresion
+						+ "', libros.editorial= '" + libro.getEditorial()
+						+ "' WHERE idlibro='" + idlibro + "'";
+				int rows = stmt.executeUpdate(update,
+						Statement.RETURN_GENERATED_KEYS);
+				if (rows != 0) {
+
+					String sql = "SELECT * FROM libros WHERE idlibro='"
+							+ idlibro + "'";
+					ResultSet rs = stmt.executeQuery(sql);
+					if (rs.next()) {
+						libro.setIdlibro(rs.getInt("idlibro"));
+						libro.setAutor(rs.getString("autor"));
+						libro.setEdicion(rs.getInt("edicion"));
+						libro.setEditorial(rs.getString("editorial"));
+						libro.setFecha_edicion(rs.getDate("fecha_edicion"));
+						libro.setFecha_impresion(rs.getDate("fecha_impresion"));
+						libro.setLengua(rs.getString("lengua"));
+						libro.setTitulo(rs.getString("titulo"));
+					}
+				} else
+					throw new LibroNotFoundException();
+			} catch (SQLException e) {
+				throw new ServiceUnavailableException(e.getMessage());
+			} finally {
+				try {
+					stmt.close();
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return libro;
 		}
-		return libro;
 	}
 }

@@ -119,8 +119,7 @@ public class UserResource {
 
 		return user;
 	}
-	
-	
+
 	@DELETE
 	@Path("/{username}")
 	public void deleteUser(@PathParam("username") String username) {
@@ -135,10 +134,15 @@ public class UserResource {
 
 		try {
 			stmt = conn.createStatement();
-			String sql = "DELETE FROM resenas WHERE username='" + username + "'";
+			String sql = "DELETE FROM resenas WHERE username='" + username
+					+ "'";
 			stmt.executeUpdate(sql);
 			sql = "DELETE FROM users WHERE username='" + username + "'";
 			stmt.executeUpdate(sql);
+
+			int rows = stmt.executeUpdate(sql);
+			if (rows == 0)
+				throw new UserNotFoundException();
 
 		} catch (SQLException e) {
 			throw new InternalServerException(e.getMessage());
@@ -197,7 +201,7 @@ public class UserResource {
 
 			{
 				throw new BadRequestException(
-						"name and email are mandatory parameters");
+						"Name and email are mandatory parameters");
 			}
 
 			int rows = stmt.executeUpdate(update,
@@ -213,7 +217,6 @@ public class UserResource {
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
 
-				
 			}
 
 			else
@@ -236,8 +239,7 @@ public class UserResource {
 
 		return user;
 	}
-	
-	
+
 	@POST
 	@Consumes(MediaType.LIBROS_API_USER)
 	@Produces(MediaType.LIBROS_API_USER)
@@ -266,9 +268,8 @@ public class UserResource {
 				String sql = "SELECT * FROM users WHERE username='"
 						+ user.getUsername() + "'";
 				ResultSet rs = stmt.executeQuery(sql);
-				rs.next();			
+				rs.next();
 
-			
 			} else
 				throw new UserNotFoundException();
 
