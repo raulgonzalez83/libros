@@ -49,11 +49,13 @@ public class ResenaResource {
 					+ idlibro + "' and users.username=resenas.username) ";
 
 			ResultSet rs = stmt.executeQuery(sql);
+
 			if (rs.next() == false) {
 				throw new ResenaNotFoundException();
 			}
 
 			else {
+				rs.previous();
 				while (rs.next()) {
 					Resena resena = new Resena();
 					resena.setIdlibro(rs.getInt("idlibro"));
@@ -67,7 +69,7 @@ public class ResenaResource {
 				}
 			}
 		} catch (SQLException e) {
-			throw new LibroNotFoundException();
+			throw new InternalServerException(e.getMessage());
 		}
 
 		finally {
@@ -110,7 +112,7 @@ public class ResenaResource {
 			sql = "SELECT * FROM libros WHERE idlibro='" + idlibro + "'";
 
 			rs = stmt.executeQuery(sql);
-			if (rs.next() == false) {
+			if (rs.first() == false) {
 				throw new LibroNotFoundException();
 			}
 
@@ -123,7 +125,9 @@ public class ResenaResource {
 
 					rs = stmt.executeQuery(sql);
 					if (rs.next() == true) {
-						throw new NotAllowedException();
+						throw new NotAllowedException();// EL usuario ya tiene
+														// una reseña para el
+														// libro
 					}
 
 					else {
@@ -203,36 +207,41 @@ public class ResenaResource {
 			stmt = conn.createStatement();
 			sql = "SELECT * FROM resenas WHERE idresena='" + idresena + "'";
 			rs = stmt.executeQuery(sql);
-			rs.next();
-			username = rs.getString("username");
 
-			if (security.getUserPrincipal().getName().equals(username)) {
+			if (rs.next() == false) {
+				throw new ResenaNotFoundException();
 
-				try {
-					stmt = conn.createStatement();
-					sql = "DELETE FROM resenas WHERE idresena='" + idresena
-							+ "'and username='" + username + "'";
-					stmt.executeUpdate(sql);
-				} catch (SQLException e) {
-					throw new InternalServerException(e.getMessage());
-				} finally {
+			} else {
+				username = rs.getString("username");
+
+				if (security.getUserPrincipal().getName().equals(username)) {
+
 					try {
-						stmt.close();
-						conn.close();
+						stmt = conn.createStatement();
+						sql = "DELETE FROM resenas WHERE idresena='" + idresena
+								+ "'and username='" + username + "'";
+						stmt.executeUpdate(sql);
 					} catch (SQLException e) {
-						e.printStackTrace();
+						throw new InternalServerException(e.getMessage());
+					} finally {
+						try {
+							stmt.close();
+							conn.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
 					}
+				}
+
+				else {
+					throw new NotAllowedException();
 				}
 			}
 
-			else {
-				throw new NotAllowedException();
-			}
-
 		} catch (SQLException e) {
-			throw new ResenaNotFoundException();
-		}
+			throw new InternalServerException(e.getMessage());
 
+		}
 	}
 
 	@PUT

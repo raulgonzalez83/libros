@@ -20,15 +20,23 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 
+import edu.upc.eetac.dsa.roxana.libros.api.links.LibrosAPILinkBuilder;
 import edu.upc.eetac.dsa.roxana.libros.model.Libro;
 import edu.upc.eetac.dsa.roxana.libros.model.LibroCollection;
+import edu.upc.eetac.dsa.roxana.libros.model.LibrosRootAPI;
 
 @Path("/libros")
 public class LibroResource {
 
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
 
+	@Context
+	private UriInfo uriInfo;
+
+	LibrosRootAPI root = new LibrosRootAPI();
+	String rel = null;
 	@Context
 	private SecurityContext security;
 
@@ -63,6 +71,8 @@ public class LibroResource {
 				libro.setEdicion(rs.getInt("edicion"));
 				libro.setFecha_edicion(rs.getDate("fecha_edicion"));
 				libro.setFecha_impresion(rs.getDate("fecha_impresion"));
+				libro.add(LibrosAPILinkBuilder.buildURILibroId(uriInfo,
+						rs.getString("idlibro"), rel));
 
 				libros.add(libro);
 			}
@@ -125,6 +135,7 @@ public class LibroResource {
 			if (rs.next() == false)
 				throw new LibroNotFoundException();
 			else {
+				rs.previous();
 				while (rs.next()) {
 					Libro libro = new Libro();
 
@@ -191,6 +202,8 @@ public class LibroResource {
 				libro.setEdicion(rs.getInt("edicion"));
 				libro.setFecha_edicion(rs.getDate("fecha_edicion"));
 				libro.setFecha_impresion(rs.getDate("fecha_impresion"));
+				libro.add(LibrosAPILinkBuilder.buildURILibroId(uriInfo,
+						rs.getString("idlibro"), rel));
 
 			}
 

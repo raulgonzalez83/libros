@@ -1,6 +1,10 @@
 package edu.upc.eetac.dsa.roxana.libros.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.upc.eetac.dsa.roxana.libros.api.links.Link;
 
 public class Libro {
 
@@ -12,6 +16,7 @@ public class Libro {
 	private Date fecha_impresion;
 	private String editorial;
 	private int idlibro;
+	private List<Link> links = new ArrayList<Link>();
 
 	public String getAutor() {
 		return autor;
@@ -76,6 +81,18 @@ public class Libro {
 
 	public void setIdlibro(int idlibro) {
 		this.idlibro = idlibro;
+	}
+
+	public void add(Link link) {
+		links.add(link);
+	}
+
+	public List<Link> getLinks() {
+		return links;
+	}
+
+	public void setLinks(List<Link> links) {
+		this.links = links;
 	}
 
 }
