@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 import javax.ws.rs.Consumes;
@@ -17,7 +19,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 
+import edu.upc.eetac.dsa.roxana.libros.api.links.LibrosAPILinkBuilder;
+import edu.upc.eetac.dsa.roxana.libros.api.links.Link;
 import edu.upc.eetac.dsa.roxana.libros.model.*;
 
 @Path("/libros/{idlibro}/resenas")
@@ -25,6 +30,12 @@ public class ResenaResource {
 
 	@Context
 	private SecurityContext security;
+
+	@Context
+	private UriInfo uriInfo;
+
+	LibrosRootAPI root = new LibrosRootAPI();
+	String rel = null;
 
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
 
@@ -64,6 +75,16 @@ public class ResenaResource {
 					resena.setUsername(rs.getString("username"));
 					resena.setTexto(rs.getString("texto"));
 					resena.setFecha_creacion(rs.getDate("fecha_creacion"));
+
+					resena.add(LibrosAPILinkBuilder.buildURIResena(uriInfo,
+							rs.getString("idresena"), rs.getString("idlibro"),
+							rel));
+
+					List<Link> links = new ArrayList<Link>();
+					links.add(LibrosAPILinkBuilder.buildURIResenas(uriInfo,
+							rs.getString("idlibro"), rel));
+
+					resenas.setLinks(links);
 
 					resenas.add(resena);
 				}

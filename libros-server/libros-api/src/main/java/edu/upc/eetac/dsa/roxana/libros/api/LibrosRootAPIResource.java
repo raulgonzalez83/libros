@@ -34,6 +34,8 @@ public class LibrosRootAPIResource {
 
 		root.add(LibrosAPILinkBuilder.buildTemplatedURILibros(uriInfo, true,
 				false, "libros"));
+
+		root.add(LibrosAPILinkBuilder.buildURIResenas(uriInfo, "resenas"));
 		return root;
 	}
 }
