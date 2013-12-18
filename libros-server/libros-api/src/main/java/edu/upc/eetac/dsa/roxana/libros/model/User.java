@@ -1,10 +1,17 @@
 package edu.upc.eetac.dsa.roxana.libros.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.upc.eetac.dsa.roxana.libros.api.links.Link;
+
 public class User {
 
 	private String username;
 	private String email;
 	private String name;
+
+	private List<Link> links = new ArrayList<Link>();
 
 	public String getEmail() {
 		return email;
@@ -30,4 +37,15 @@ public class User {
 		this.name = name;
 	}
 
+	public void add(Link link) {
+		links.add(link);
+	}
+
+	public List<Link> getLinks() {
+		return links;
+	}
+
+	public void setLinks(List<Link> links) {
+		this.links = links;
+	}
 }

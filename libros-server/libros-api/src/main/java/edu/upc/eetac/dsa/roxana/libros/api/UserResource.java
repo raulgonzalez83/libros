@@ -14,13 +14,23 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
+import edu.upc.eetac.dsa.roxana.libros.api.links.LibrosAPILinkBuilder;
+import edu.upc.eetac.dsa.roxana.libros.model.LibrosRootAPI;
 import edu.upc.eetac.dsa.roxana.libros.model.User;
 import edu.upc.eetac.dsa.roxana.libros.model.UserCollection;
 
 @Path("/users")
 public class UserResource {
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
+
+	@Context
+	private UriInfo uriInfo;
+
+	LibrosRootAPI root = new LibrosRootAPI();
+	String rel = null;
 
 	@GET
 	@Produces(MediaType.LIBROS_API_USER_COLLECTION)
@@ -49,6 +59,8 @@ public class UserResource {
 				user.setUsername(rs.getString("username"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
+				user.add(LibrosAPILinkBuilder.buildURIUserName(uriInfo,
+						rs.getString("username"), rel));
 
 				users.add(user);
 			}
@@ -97,6 +109,8 @@ public class UserResource {
 				user.setUsername(rs.getString("username"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
+				user.add(LibrosAPILinkBuilder.buildURIUserName(uriInfo,
+						rs.getString("username"), rel));
 
 			}
 
@@ -216,6 +230,8 @@ public class UserResource {
 				user.setUsername(rs.getString("username"));
 				user.setName(rs.getString("name"));
 				user.setEmail(rs.getString("email"));
+				user.add(LibrosAPILinkBuilder.buildURIUserName(uriInfo,
+						rs.getString("username"), rel));
 
 			}
 
@@ -269,6 +285,9 @@ public class UserResource {
 						+ user.getUsername() + "'";
 				ResultSet rs = stmt.executeQuery(sql);
 				rs.next();
+
+				user.add(LibrosAPILinkBuilder.buildURIUserName(uriInfo,
+						rs.getString("username"), rel));
 
 			} else
 				throw new UserNotFoundException();

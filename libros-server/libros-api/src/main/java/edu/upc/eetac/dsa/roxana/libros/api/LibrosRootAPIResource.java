@@ -22,26 +22,18 @@ public class LibrosRootAPIResource {
 
 		root.add(LibrosAPILinkBuilder.buildURIRootAPI(uriInfo));
 
-		root.add(LibrosAPILinkBuilder.buildTemplatedURIStings(uriInfo,
-				"libros", true));
-
-		root.add(LibrosAPILinkBuilder.buildTemplatedURIStings(uriInfo,
-				"libros", false));
-
 		root.add(LibrosAPILinkBuilder.buildURIUsers(uriInfo, "users"));
 
-		root.add(LibrosAPILinkBuilder.buildTemplatedURIUsers(uriInfo, "users",
-				true, true));
+		root.add(LibrosAPILinkBuilder.buildURILibros(uriInfo, "libros"));
 
-		root.add(LibrosAPILinkBuilder.buildTemplatedURIUsers(uriInfo, "users",
-				true, false));
+		root.add(LibrosAPILinkBuilder.buildTemplatedURILibros(uriInfo, true,
+				true, "libros"));
 
-		root.add(LibrosAPILinkBuilder.buildTemplatedURIUsers(uriInfo, "users",
-				false, true));
+		root.add(LibrosAPILinkBuilder.buildTemplatedURILibros(uriInfo, false,
+				true, "libros"));
 
-		root.add(LibrosAPILinkBuilder.buildURIStings(uriInfo, "create"));
-
+		root.add(LibrosAPILinkBuilder.buildTemplatedURILibros(uriInfo, true,
+				false, "libros"));
 		return root;
 	}
-
 }

@@ -5,6 +5,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 import javax.ws.rs.Consumes;
@@ -23,6 +25,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import edu.upc.eetac.dsa.roxana.libros.api.links.LibrosAPILinkBuilder;
+import edu.upc.eetac.dsa.roxana.libros.api.links.Link;
 import edu.upc.eetac.dsa.roxana.libros.model.Libro;
 import edu.upc.eetac.dsa.roxana.libros.model.LibroCollection;
 import edu.upc.eetac.dsa.roxana.libros.model.LibrosRootAPI;
@@ -147,6 +150,14 @@ public class LibroResource {
 					libro.setFecha_edicion(rs.getDate("fecha_edicion"));
 					libro.setFecha_impresion(rs.getDate("fecha_impresion"));
 
+					libro.add(LibrosAPILinkBuilder.buildURILibroId(uriInfo,
+							rs.getString("idlibro"), rel));
+
+					List<Link> links = new ArrayList<Link>();
+					links.add(LibrosAPILinkBuilder.buildURILibros(uriInfo,
+							titulo, autor, rel));
+
+					libros.setLinks(links);
 					libros.add(libro);
 				}
 			}
@@ -287,6 +298,8 @@ public class LibroResource {
 						libro.setEdicion(rs.getInt("edicion"));
 						libro.setFecha_edicion(rs.getDate("fecha_edicion"));
 						libro.setFecha_impresion(rs.getDate("fecha_impresion"));
+						libro.add(LibrosAPILinkBuilder.buildURILibroId(uriInfo,
+								rs.getString("idlibro"), rel));
 
 					}
 
@@ -419,6 +432,8 @@ public class LibroResource {
 						libro.setFecha_impresion(rs.getDate("fecha_impresion"));
 						libro.setLengua(rs.getString("lengua"));
 						libro.setTitulo(rs.getString("titulo"));
+						libro.add(LibrosAPILinkBuilder.buildURILibroId(uriInfo,
+								rs.getString("idlibro"), rel));
 					}
 				} else
 					throw new LibroNotFoundException();

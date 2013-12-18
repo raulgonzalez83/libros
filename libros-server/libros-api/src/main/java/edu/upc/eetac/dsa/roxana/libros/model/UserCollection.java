@@ -3,6 +3,8 @@ package edu.upc.eetac.dsa.roxana.libros.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.upc.eetac.dsa.roxana.libros.api.links.Link;
+
 public class UserCollection {
 
 	private List<User> users = new ArrayList<User>();
