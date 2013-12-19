@@ -77,6 +77,11 @@ public class LibroResource {
 				libro.add(LibrosAPILinkBuilder.buildURILibroId(uriInfo,
 						rs.getString("idlibro"), rel));
 
+				List<Link> links = new ArrayList<Link>();
+				links.add(LibrosAPILinkBuilder.buildURILibros(uriInfo, rel));
+
+				libros.setLinks(links);
+
 				libros.add(libro);
 			}
 		} catch (SQLException e) {
